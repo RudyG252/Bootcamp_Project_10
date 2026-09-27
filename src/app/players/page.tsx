@@ -1,0 +1,3 @@
+export default function Players() {
+  return <h1>Players page coming soon</h1>;
+}
