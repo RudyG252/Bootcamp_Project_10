@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { name, elo_s, elo_d, matches } = body;
 
     //TODO: Create a match using Player.create() with format, team1, team2 and queued as the status
-    const create_player = await Player.create(name, elo_s, elo_d, matches);
+    const create_player = await Player.create({ name, elo_s, elo_d, matches });
     //TODO: return a NextResponse.json() with the match and a successful status code
     return NextResponse.json(create_player, { status: 201 });
   } catch (error) {
