@@ -3,5 +3,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "postman.telemetry.enabled": false,
+  "postman.mcp.notifications.postmanMCP": false
 }
