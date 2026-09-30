@@ -6,7 +6,12 @@ const playerSchema = new Schema({
     required: true,
   },
 
-  elo: {
+  elo_s: {
+    type: Number,
+    default: 300,
+  },
+
+  elo_d: {
     type: Number,
     default: 300,
   },

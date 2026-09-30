@@ -4,17 +4,20 @@ const mockPlayers = [
   {
     _id: "1",
     name: "BobBad",
-    elo: 200,
+    elo_s: 200,
+    elo_d: 400,
   },
   {
     _id: "2",
     name: "BobGood",
-    elo: 700,
+    elo_s: 700,
+    elo_d: 800,
   },
   {
     _id: "3",
     name: "BobMid",
-    elo: 500,
+    elo_s: 500,
+    elo_d: 600,
   },
 ];
 
