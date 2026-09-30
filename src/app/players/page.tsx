@@ -1,3 +1,5 @@
+import LeaderBoard from "@/components/Leaderboard";
+
 const mockPlayers = [
   {
     _id: "1",
@@ -17,5 +19,10 @@ const mockPlayers = [
 ];
 
 export default function Players() {
-  return <h1>Players page coming soon</h1>;
+  return (
+    <div>
+      <h1>Players page coming soon</h1>
+      <LeaderBoard />
+    </div>
+  );
 }
