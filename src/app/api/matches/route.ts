@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 import connectDB from "@/database/db";
 import Match from "@/database/schemas/matchSchema";
-import { NEXT_BODY_SUFFIX } from "next/dist/lib/constants";
 
 // Creating a match in the database
 // Note: eventually we will have to add a match to a player's match list whenever we create one but we
