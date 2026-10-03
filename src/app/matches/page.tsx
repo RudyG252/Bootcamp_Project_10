@@ -1,3 +1,5 @@
+import MatchesTable from "@/components/matchesTable";
+
 const mockMatches = [
   {
     _id: "match1",
@@ -116,5 +118,10 @@ const mockMatches = [
 ];
 
 export default function Matches() {
-  return <h1>Matches page coming soon</h1>;
+  return (
+    <main>
+      <h1>Matches</h1>
+      <MatchesTable matches={mockMatches} />
+    </main>
+  );
 }
