@@ -1,6 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 
-const playerSchema = new Schema({
+export interface playerInterface {
+  _id: mongoose.Types.ObjectId;
+  name: String;
+  elo_s: number;
+  elo_d: number;
+  matches: Schema.Types.ObjectId[];
+}
+
+const playerSchema = new Schema<playerInterface>({
   name: {
     type: String,
     required: true,
@@ -24,6 +32,6 @@ const playerSchema = new Schema({
   ],
 });
 
-const Player = mongoose.models.Player || mongoose.model("Player", playerSchema);
+const Player = mongoose.models.Player || mongoose.model<playerInterface>("Player", playerSchema);
 
 export default Player;
