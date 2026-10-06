@@ -1,9 +1,8 @@
 import LeaderBoard from "@/components/Leaderboard";
 import { playerInterface } from "@/database/schemas/playerSchema";
-import { Types } from "mongoose";
 import mongoose from "mongoose";
 
-const mockPlayers = [
+export const mockPlayers = [
   {
     _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011"),
     name: "BobBad",
@@ -30,8 +29,7 @@ const mockPlayers = [
 export default function Players() {
   return (
     <div>
-      <h1>The Players Page</h1>
-      {LeaderBoard(mockPlayers, true)}
+      <h1>This is the players page</h1>
     </div>
   );
 }

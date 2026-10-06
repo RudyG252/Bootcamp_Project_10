@@ -8,7 +8,7 @@ import Player, { playerInterface } from "@/database/schemas/playerSchema";
 //     matches: Schema.Types.ObjectId[];
 //   }
 
-export default function LeaderBoard(playerList: playerInterface[], inSingles: boolean) {
+export default function LeaderBoard(playerList: playerInterface[], isSingles: boolean) {
   return (
     <div className="bg-blue-200 align-middle items-center mt-12 max-w-200 mx-auto">
       <div className="items-center">
@@ -19,8 +19,7 @@ export default function LeaderBoard(playerList: playerInterface[], inSingles: bo
           <tr className="border-b-2 border-blue-200">
             <th className="">Rank</th>
             <th>Name</th>
-            <th>Elo S</th>
-            <th>Elo D</th>
+            {isSingles ? <th>Elo S</th> : <th>Elo D</th>}
           </tr>
         </thead>
         <tbody className="align-middle items-center text-center">
@@ -30,8 +29,7 @@ export default function LeaderBoard(playerList: playerInterface[], inSingles: bo
               <tr key={player._id.toString()} className="hover:bg-blue-100">
                 <td>{index + 1}</td>
                 <td>{player.name}</td>
-                <td>{player.elo_s}</td>
-                <td>{player.elo_d}</td>
+                {isSingles ? <td>{player.elo_s}</td> : <td>{player.elo_d}</td>}
               </tr>
             ))}
         </tbody>
