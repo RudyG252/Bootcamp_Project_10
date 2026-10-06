@@ -120,7 +120,7 @@ const mockMatches = [
 export default function Matches() {
   return (
     <main>
-      <h1>Matches</h1>
+      <h1 className="text-2xl text-center font-bold mb-4">Matches</h1>
       <MatchesTable matches={mockMatches} />
     </main>
   );
