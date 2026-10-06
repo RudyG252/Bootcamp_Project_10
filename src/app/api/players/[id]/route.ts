@@ -7,58 +7,55 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-interface PlayerFormat {
-  _id: mongoose.Types.ObjectId | string;
-  name: string;
-}
-
 export async function PUT(request: Request, context: RouteContext) {
   try {
     await connectDB();
 
-    const { id: currentID } = await context.params;
+    const { id } = await context.params;
 
     const body = await request.json();
+    const { name, elo_s, elo_d, matches } = body;
 
-    const { newID } = body;
-
-    //Checks if newID was provided in Body in PostMan
-    if (!newID) {
-      return NextResponse.json({ error: "A newID must be provided" }, { status: 400 });
+    //Checks if if the ID provided in the URL is Malformed
+    if (!mongoose.isValidObjectId(id)) {
+      return NextResponse.json({ error: `The id provided is malformed.` }, { status: 400 });
     }
 
-    //Checks if either currentID and newID is Malformed. Catches currentID first
-    for (const [key, value] of Object.entries({ currentID, newID })) {
-      if (!mongoose.isValidObjectId(value)) {
-        return NextResponse.json({ error: `The ${key} is malformed.` }, { status: 400 });
-      }
-    }
-
-    const originalPlayer = (await Player.findById(currentID).lean()) as PlayerFormat | null;
+    const originalPlayer = await Player.findById(id).lean();
     //Catches Well-formed IDs (IDs that are valid but not found in the database)
     if (!originalPlayer) {
-      return NextResponse.json({ error: "No Player Found With Given ID" }, { status: 404 });
+      if (!name) {
+        return NextResponse.json(
+          { error: "No Player Found With Given ID. Provide the required field { name }" },
+          { status: 404 },
+        );
+      }
+      const create_player = await Player.findByIdAndUpdate(
+        id,
+        { name, elo_s, elo_d, matches },
+        { new: true, upsert: true, runValidators: true },
+      );
+      return NextResponse.json({ message: "New Player Succesfully Created", newData: create_player }, { status: 200 });
     }
 
-    //Checks if the newID provided already exist in the data or the same as the currentID
-    const existingNewPlayer = await Player.findById(newID).lean();
-    if (existingNewPlayer) {
+    if (!name && !elo_s && !elo_d && !matches) {
       return NextResponse.json(
-        { error: "There is already a Player containing the given newID OR newID is the same as currentID" },
-        { status: 409 },
+        {
+          error: "Provide atleast 1 of the fields in the body { name, elo_s, elo_d, matches }",
+        },
+        { status: 400 },
       );
     }
-    //Creates a new Player with the new id and required informations based on the Player Schema
-    const newPlayerDocument: PlayerFormat = {
-      _id: newID,
-      name: originalPlayer.name,
-    };
 
-    //Creates/Updates a Player with a new ID.
-    const savedNewPlayer = await Player.create(newPlayerDocument);
-    //Deletes the old Player information containing the old ID from the database
-    await Player.findByIdAndDelete(currentID);
-    return NextResponse.json({ message: "Player ID Updated", data: savedNewPlayer, status: 200 });
+    const update_player = await Player.findByIdAndUpdate(
+      id,
+      { name, elo_s, elo_d, matches },
+      { new: true, runValidators: true },
+    );
+    return NextResponse.json(
+      { message: "Existing Player Sucessfully Updated", newData: update_player },
+      { status: 200 },
+    );
 
     //Catches Other errors.
   } catch (error) {
@@ -80,7 +77,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     if (!deletedPlayer) {
       return NextResponse.json({ error: "No Player Found With Given ID" }, { status: 404 });
     }
-    return NextResponse.json({ message: "Player Succesfully Deleted", deletedData: deletedPlayer, status: 200 });
+    return NextResponse.json({ message: "Player Succesfully Deleted", deletedData: deletedPlayer }, { status: 200 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
