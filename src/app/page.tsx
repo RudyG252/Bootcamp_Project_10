@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <h1>Home</h1>
+      <h1>This is the Home Page.</h1>
     </main>
   );
 }
