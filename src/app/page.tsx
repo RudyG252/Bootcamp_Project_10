@@ -4,9 +4,7 @@ import { mockPlayers } from "./players/page";
 
 export default function Home() {
   return (
-    <main className="bg-gray-700">
-      <Navbar />
-      <h1>Home</h1>
+    <main>
       {LeaderBoard(mockPlayers, true)}
       {LeaderBoard(mockPlayers, false)}
     </main>
