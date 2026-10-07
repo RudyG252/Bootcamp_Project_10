@@ -1,127 +1,26 @@
+import { connection } from "next/server";
 import MatchesTable from "@/components/matchesTable";
+import connectDB from "@/database/db";
+import Player from "@/database/schemas/playerSchema";
+import Match from "@/database/schemas/matchSchema";
 
-const mockMatches = [
-  {
-    _id: "match1",
-    format: "singles",
+export default async function Matches() {
+  await connection();
+  await connectDB();
 
-    team1: [
-      {
-        player: {
-          _id: "player1",
-          name: "Rudy",
-          elo: 1216,
-        },
-        eloBefore: 1200,
-        eloChange: 16,
-        eloAfter: 1216,
-      },
-    ],
+  const matches = await Match.find()
+    .populate({ path: "team1.player", model: Player, select: "name" })
+    .populate({ path: "team2.player", model: Player, select: "name" })
+    .lean();
 
-    team2: [
-      {
-        player: {
-          _id: "player2",
-          name: "Simon",
-          elo: 1164,
-        },
-        eloBefore: 1180,
-        eloChange: -16,
-        eloAfter: 1164,
-      },
-    ],
+  if (matches.length === 0) {
+    return <p>No matches yet.</p>;
+  }
 
-    winner: "team1",
-    status: "completed",
-  },
-
-  {
-    _id: "match2",
-    format: "doubles",
-
-    team1: [
-      {
-        player: {
-          _id: "player1",
-          name: "Rudy",
-          elo: 1198,
-        },
-        eloBefore: 1216,
-        eloChange: -18,
-        eloAfter: 1198,
-      },
-      {
-        player: {
-          _id: "player3",
-          name: "Noah",
-          elo: 1082,
-        },
-        eloBefore: 1100,
-        eloChange: -18,
-        eloAfter: 1082,
-      },
-    ],
-
-    team2: [
-      {
-        player: {
-          _id: "player2",
-          name: "Simon",
-          elo: 1182,
-        },
-        eloBefore: 1164,
-        eloChange: 18,
-        eloAfter: 1182,
-      },
-      {
-        player: {
-          _id: "player4",
-          name: "Ryan",
-          elo: 1268,
-        },
-        eloBefore: 1250,
-        eloChange: 18,
-        eloAfter: 1268,
-      },
-    ],
-
-    winner: "team2",
-    status: "completed",
-  },
-
-  {
-    _id: "match3",
-    format: "singles",
-
-    team1: [
-      {
-        player: {
-          _id: "player3",
-          name: "Noah",
-          elo: 1082,
-        },
-      },
-    ],
-
-    team2: [
-      {
-        player: {
-          _id: "player4",
-          name: "Ryan",
-          elo: 1268,
-        },
-      },
-    ],
-
-    status: "queued",
-  },
-];
-
-export default function Matches() {
   return (
-    <main>
+    <div>
       <h1 className="text-2xl text-center font-bold mb-4">Matches</h1>
-      <MatchesTable matches={mockMatches} />
-    </main>
+      <MatchesTable matches={matches} />
+    </div>
   );
 }
