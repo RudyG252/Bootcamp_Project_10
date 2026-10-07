@@ -1,5 +1,6 @@
 import Instagram from "../../images/instagram.png";
 import LinkTree from "../../images/linktree.webp";
+import Facebook from "../../images/facebook.png";
 import Image from "next/image";
 import LeaderBoard from "@/components/Leaderboard";
 import { mockPlayers } from "../players/page";
@@ -55,6 +56,11 @@ export default function About() {
                 <div>
                   <a href="https://linktr.ee/calpolybadminton?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaft1O5BpH-hbai-7f9j4X6d2miyQZmX1Vcr5EBkgf8u8QKg2HKCWWIlNNmQDg_aem_erdToiunPZAb-dt6UO39rg">
                     <Image src={LinkTree} alt="linktree" className="h-10 w-10 rounded-lg" />
+                  </a>
+                </div>
+                <div>
+                  <a href="https://www.facebook.com/groups/calpolybadmintonteam/">
+                    <Image src={Facebook} alt="linktree" className="h-10 w-10 rounded-lg" />
                   </a>
                 </div>
               </div>
