@@ -1,9 +1,12 @@
 import Navbar from "@/components/Navbar";
+import LeaderBoard from "@/components/Leaderboard";
+import { mockPlayers } from "./players/page";
 
 export default function Home() {
   return (
     <main>
-      <h1>This is the Home Page.</h1>
+      {LeaderBoard(mockPlayers, true)}
+      {LeaderBoard(mockPlayers, false)}
     </main>
   );
 }
