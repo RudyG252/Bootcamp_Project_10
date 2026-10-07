@@ -10,7 +10,7 @@ import Player, { playerInterface } from "@/database/schemas/playerSchema";
 
 export default function LeaderBoard(playerList: playerInterface[], isSingles: boolean) {
   return (
-    <div className="bg-blue-200 align-middle items-center mt-12 max-w-250 mx-auto">
+    <div className="bg-blue-200 align-middle items-center mt-12 max-w-250 mx-auto min-w-145">
       <div className="items-center">
         <h1 className="text-center text-4xl bg-blue-400 p-3 text-white font-bold">
           {isSingles ? "Singles " : "Doubles "}Leaderboard
