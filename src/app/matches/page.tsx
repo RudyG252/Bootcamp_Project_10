@@ -1,6 +1,6 @@
 import MatchesTable from "@/components/matchesTable";
 
-const mockMatches = [
+export const mockMatches = [
   {
     _id: "match1",
     format: "singles",

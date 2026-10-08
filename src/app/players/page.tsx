@@ -1,4 +1,3 @@
-import LeaderBoard from "@/components/Leaderboard";
 import { playerInterface } from "@/database/schemas/playerSchema";
 import mongoose from "mongoose";
 
@@ -26,10 +25,8 @@ export const mockPlayers = [
   },
 ] as playerInterface[];
 
-export default function Players() {
-  return (
-    <div>
-      <h1>This is the players page</h1>
-    </div>
-  );
+import Players from "@/components/players";
+
+export default function Page() {
+  return <Players />;
 }
