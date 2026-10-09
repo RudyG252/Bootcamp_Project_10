@@ -1,11 +1,11 @@
-import { connection } from "next/server";
 import Navbar from "@/components/Navbar";
 import LeaderBoard from "@/components/Leaderboard";
 import connectDB from "@/database/db";
 import Player, { type playerInterface } from "@/database/schemas/playerSchema";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
-  await connection();
   await connectDB();
 
   const players = await Player.find().lean<playerInterface[]>();

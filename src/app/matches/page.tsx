@@ -1,11 +1,11 @@
-import { connection } from "next/server";
 import MatchesTable from "@/components/matchesTable";
 import connectDB from "@/database/db";
 import Player from "@/database/schemas/playerSchema";
 import Match from "@/database/schemas/matchSchema";
 
+export const dynamic = "force-dynamic";
+
 export default async function Matches() {
-  await connection();
   await connectDB();
 
   const matches = await Match.find()
