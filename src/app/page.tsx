@@ -1,12 +1,23 @@
 import Navbar from "@/components/Navbar";
 import LeaderBoard from "@/components/Leaderboard";
-import { mockPlayers } from "./players/page";
+import connectDB from "@/database/db";
+import Player, { type playerInterface } from "@/database/schemas/playerSchema";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  await connectDB();
+
+  const players = await Player.find().lean<playerInterface[]>();
+
+  if (players.length === 0) {
+    return <p>No players yet.</p>;
+  }
+
   return (
-    <main>
-      {LeaderBoard(mockPlayers, true)}
-      {LeaderBoard(mockPlayers, false)}
-    </main>
+    <div>
+      {LeaderBoard(players, true)}
+      {LeaderBoard(players, false)}
+    </div>
   );
 }
