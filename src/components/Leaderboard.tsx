@@ -26,7 +26,7 @@ export default function LeaderBoard(playerList: playerInterface[], isSingles: bo
         </thead>
         <tbody className="align-middle items-center text-center">
           {[...playerList]
-            .sort((a, b) => b.elo_d - a.elo_d)
+            .sort((a, b) => (isSingles ? b.elo_s - a.elo_s : b.elo_d - a.elo_d))
             .map((player: playerInterface, index: number) => (
               <tr key={player._id.toString()} className="hover:bg-blue-100">
                 <td>{index + 1}</td>
