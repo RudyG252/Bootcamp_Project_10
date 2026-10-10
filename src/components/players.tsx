@@ -1,6 +1,18 @@
 import Matches from "@/components/matchesTable";
 import { mockMatches } from "@/app/matches/page";
 
+interface Player {
+  name: string;
+  elo_s: number;
+  elo_d: number;
+}
+
+const player: Player = {
+  name: "John Doe",
+  elo_s: 1500,
+  elo_d: 1400,
+};
+
 export default function Players() {
   return (
     <div>
@@ -14,7 +26,7 @@ export default function Players() {
         <div>
           <div>
             <p>Singles ELO</p>
-            <p className="text-2xl font-bold">{player.elo_s}</p>
+            <p>{player.elo_s}</p>
           </div>
 
           <div>
