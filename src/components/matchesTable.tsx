@@ -1,6 +1,7 @@
 type MatchesProps = {
   matches: any[];
   playerName?: string;
+  className?: string;
 };
 
 export default function Matches({ matches, className = "p-4" }: MatchesProps) {
@@ -23,12 +24,12 @@ export default function Matches({ matches, className = "p-4" }: MatchesProps) {
         <tbody>
           {completedMatches.map((match) => (
             <tr key={match._id}>
-              <td className="px-4 py-2 border-b">{match.team1.map((player) => player.player.name).join(" & ")}</td>
-              <td className="px-4 py-2 border-b">{match.team2.map((player) => player.player.name).join(" & ")}</td>
+              <td className="px-4 py-2 border-b">{match.team1.map((player: any) => player.player.name).join(" & ")}</td>
+              <td className="px-4 py-2 border-b">{match.team2.map((player: any) => player.player.name).join(" & ")}</td>
               <td className="px-4 py-2 border-b">{match.winner === "team1" ? "Team 1" : "Team 2"}</td>
               <td className="px-4 py-2 border-b">
-                {match.team1.reduce((acc, player) => acc + player.eloChange, 0)} /{" "}
-                {match.team2.reduce((acc, player) => acc + player.eloChange, 0)}
+                {match.team1.reduce((acc: number, player: any) => acc + player.eloChange, 0)} /{" "}
+                {match.team2.reduce((acc: number, player: any) => acc + player.eloChange, 0)}
               </td>
             </tr>
           ))}
