@@ -65,19 +65,31 @@ export async function POST(request: Request) {
 }
 
 // Getting a list of all players
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
 
-    //TODO: Create a list of players using Player.find()
-    const player_list = await Player.find();
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get("search");
 
-    //TODO: return a NextResponse.json() with the list of players and a successful status code
+    let player_list;
+
+    // Filteres the database results if search exists
+    if (searchQuery && searchQuery.trim() != "") {
+      const searchString = searchQuery.trim();
+      const caseInsensitiveRegex = new RegExp(searchString, "i");
+      player_list = await Player.find({ name: caseInsensitiveRegex }).limit(10); //Limits results to 10 players
+    } else {
+      //Gets all players if no query is passed
+      player_list = await Player.find().limit(20);
+    }
+
+    // Return a NextResponse.json() with the list of players and a successful status code
     return NextResponse.json(player_list, { status: 200 });
   } catch (error) {
     console.error(error);
 
-    //TODO: return a NextResponse.json() with the error and an error status code
+    // Return a NextResponse.json() with the error and an error status code
     return NextResponse.json({ error: "Failed to find players" }, { status: 500 });
   }
 }
