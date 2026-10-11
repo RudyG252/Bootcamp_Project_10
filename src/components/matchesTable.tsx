@@ -3,11 +3,11 @@ type MatchesProps = {
   playerName?: string;
 };
 
-export default function Matches({ matches }: MatchesProps) {
+export default function Matches({ matches, className = "p-4" }: MatchesProps) {
   const completedMatches = matches.filter((match) => match.status === "completed");
 
   return (
-    <div className="p-4">
+    <div className={className}>
       <h2 className="text-xl font-bold mb-4">Completed Matches</h2>
 
       {/* Table displaying completed matches */}

@@ -14,7 +14,9 @@ interface PlayerInfo {
 export default async function Players() {
   await connectDB();
 
-  const playerData = await Player.findOne({ name: "jAKCY WU" }).lean();
+  // To test the filter, put { name: "" } in between .findOne() like this:
+  // const playerData = await Player.findOne({ name: "Rudy" }).lean();
+  const playerData = await Player.findOne().lean();
 
   if (!playerData) {
     return <p>No players found.</p>;
@@ -40,7 +42,7 @@ export default async function Players() {
 
   return (
     <div className="p-6">
-      <div className="h-24 w-full bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
+      <div className="h-15 w-full bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
         <p className="text-gray-500">Future search bar</p>
       </div>
 
@@ -60,7 +62,9 @@ export default async function Players() {
         </div>
       </div>
 
-      <MatchesTable matches={JSON.parse(JSON.stringify(playerMatches))} playerName={player.name} />
+      <div className="mt-6">
+        <MatchesTable matches={JSON.parse(JSON.stringify(playerMatches))} playerName={player.name} className="p-0" />
+      </div>
     </div>
   );
 }
