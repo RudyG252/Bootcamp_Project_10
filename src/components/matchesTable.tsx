@@ -1,5 +1,6 @@
 type MatchesProps = {
   matches: any[];
+  playerName?: string;
 };
 
 export default function Matches({ matches }: MatchesProps) {

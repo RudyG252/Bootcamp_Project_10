@@ -1,42 +1,66 @@
-import Matches from "@/components/matchesTable";
-import { mockMatches } from "@/app/matches/page";
+import MatchesTable from "@/components/matchesTable";
+import connectDB from "@/database/db";
+import Player from "@/database/schemas/playerSchema";
+import Match from "@/database/schemas/matchSchema";
 
-interface Player {
+export const dynamic = "force-dynamic";
+
+interface PlayerInfo {
   name: string;
   elo_s: number;
   elo_d: number;
 }
 
-const player: Player = {
-  name: "John Doe",
-  elo_s: 1500,
-  elo_d: 1400,
-};
+export default async function Players() {
+  await connectDB();
 
-export default function Players() {
+  const playerData = await Player.findOne({ name: "jAKCY WU" }).lean();
+
+  if (!playerData) {
+    return <p>No players found.</p>;
+  }
+
+  const matches = await Match.find()
+    .populate({ path: "team1.player", model: Player, select: "name" })
+    .populate({ path: "team2.player", model: Player, select: "name" })
+    .lean();
+
+  const player = {
+    name: playerData.name,
+    elo_s: playerData.elo_s,
+    elo_d: playerData.elo_d,
+  };
+
+  const playerMatches = matches.filter((match: any) => {
+    return (
+      match.team1.some((p: any) => p.player?.name === player.name) ||
+      match.team2.some((p: any) => p.player?.name === player.name)
+    );
+  });
+
   return (
-    <div>
-      <div>
-        <p>Future search bar</p>
+    <div className="p-6">
+      <div className="h-24 w-full bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
+        <p className="text-gray-500">Future search bar</p>
       </div>
 
-      <div>
-        <h1>{player.name}</h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold ">{player.name}</h1>
 
-        <div>
-          <div>
-            <p>Singles ELO</p>
-            <p>{player.elo_s}</p>
+        <div className="flex gap-6 mt-4">
+          <div className="border rounded-lg p-4">
+            <p className="text-gray-500">Singles ELO</p>
+            <p className="text-2xl font-bold">{player.elo_s}</p>
           </div>
 
-          <div>
-            <p>Doubles ELO</p>
-            <p>{player.elo_d}</p>
+          <div className="border rounded-lg p-4">
+            <p className="text-gray-500">Doubles ELO</p>
+            <p className="text-2xl font-bold">{player.elo_d}</p>
           </div>
         </div>
       </div>
 
-      <Matches matches={mockMatches} playerName={player.name} />
+      <MatchesTable matches={JSON.parse(JSON.stringify(playerMatches))} playerName={player.name} />
     </div>
   );
 }
