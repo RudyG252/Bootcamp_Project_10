@@ -1,5 +1,7 @@
 import { playerInterface } from "@/database/schemas/playerSchema";
 import mongoose from "mongoose";
+import Players from "@/components/players";
+import FilterWrapper from "@/components/FilterWrapper";
 
 export const mockPlayers = [
   // {
@@ -25,8 +27,15 @@ export const mockPlayers = [
   // },
 ] as playerInterface[];
 
-import Players from "@/components/players";
+export default async function Page({ searchParams }: { searchParams: Promise<{ playerId?: string }> }) {
+  const { playerId } = await searchParams;
 
-export default function Page() {
-  return <Players />;
+  return (
+    <div>
+      <div className="h-15 w-full rounded-lg mb-6 flex items-center justify-center">
+        <FilterWrapper />
+      </div>
+      <Players playerId={playerId} />
+    </div>
+  );
 }
