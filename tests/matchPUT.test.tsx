@@ -51,7 +51,7 @@ describe("PUT Unit Test", () => {
   });
 
   //Test Case 1: ID in the URL is Malformed
-  test("Returns 400 if the ID provided in the URL parameters is malformed", async () => {
+  test("Returns 400 if the ID provided in the URL parameters is malformed ", async () => {
     vi.mocked(connectDB).mockResolvedValue(undefined);
     vi.mocked(mongoose.isValidObjectId).mockReturnValue(false); // Simulate bad ID formatting
 
