@@ -2,21 +2,20 @@ import MatchesTable from "@/components/matchesTable";
 import connectDB from "@/database/db";
 import Player from "@/database/schemas/playerSchema";
 import Match from "@/database/schemas/matchSchema";
+import FilterWrapper from "./FilterWrapper";
 
 export const dynamic = "force-dynamic";
 
-interface PlayerInfo {
-  name: string;
-  elo_s: number;
-  elo_d: number;
+interface PlayersProps {
+  playerId?: string;
 }
 
-export default async function Players() {
+export default async function Players({ playerId }: PlayersProps) {
   await connectDB();
 
   // To test the filter, put { name: "" } in between .findOne() like this:
   // const playerData = await Player.findOne({ name: "Rudy" }).lean();
-  const playerData = await Player.findOne().lean();
+  const playerData = playerId ? await Player.findById(playerId).lean() : await Player.findOne().lean();
 
   if (!playerData) {
     return <p>No players found.</p>;
@@ -42,10 +41,6 @@ export default async function Players() {
 
   return (
     <div className="p-6">
-      <div className="h-15 w-full bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
-        <p className="text-gray-500">Future search bar</p>
-      </div>
-
       <div className="mb-6">
         <h1 className="text-3xl font-bold ">{player.name}</h1>
 
