@@ -6,13 +6,14 @@ import LeaderBoard from "@/components/Leaderboard";
 import { mockPlayers } from "../players/page";
 import Badminton1 from "../../images/Badminton/badminton1.jpg";
 import Badminton2 from "../../images/Badminton/badminton2.jpg";
+import Step1 from "../../images/aboutSteps/step1.jpg";
 
 const steps = [
   {
     step: 1,
     description: "You will be matched with players with similar elo rankings",
     alt: "image of players getting matched",
-    src: "",
+    src: Step1,
   },
   {
     step: 2,
@@ -81,7 +82,7 @@ export default function About() {
               {steps.map((stepObj, index) => (
                 <div className={`flex flex-col ${stepObj.step % 2 == 0 ? "ml-auto" : "justify-start"}`} key={index}>
                   <Image
-                    src={""}
+                    src={stepObj.src}
                     alt={stepObj.alt}
                     className="border-2 border-black min-w-150 max-w-150 min-h-50"
                   ></Image>
