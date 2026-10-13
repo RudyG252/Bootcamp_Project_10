@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 //Form
 export default function AddMatch() {
   const [players, setPlayers] = useState<any[]>([]);
-  const [team1, setTeam1] = useState(""); // id of the team 1 player
-  const [team2, setTeam2] = useState(""); // id of the team 2 player
+  const [team1, setTeam1] = useState(""); // id of team 1's first player
+  const [team1b, setTeam1b] = useState(""); // id of team 1's second player
+  const [team2, setTeam2] = useState(""); // id of team 2's first player
+  const [team2b, setTeam2b] = useState(""); // id of team 2's second player
   const [format, setFormat] = useState("singles");
   const [winner, setWinner] = useState("team1");
   const [error, setError] = useState("");
@@ -35,33 +37,57 @@ export default function AddMatch() {
 
   // Function to add a match
   async function addMatch() {
-    // find the two chosen players
-    const player1 = players.find((p) => p._id === team1);
-    const player2 = players.find((p) => p._id === team2);
-    // Check if both players are selected and are different
-    if (!player1 || !player2 || player1 === player2) {
-      setError("Pick two different players");
+    const doubles = format === "doubles";
+
+    // Determine which ELO to use based on the match format
+    const key = doubles ? "elo_d" : "elo_s";
+
+    // The picked ids on each team
+    const ids1 = doubles ? [team1, team1b] : [team1];
+    const ids2 = doubles ? [team2, team2b] : [team2];
+    const allIds = [...ids1, ...ids2];
+
+    // Check every spot is filled and nobody is picked twice
+    if (allIds.includes("")) {
+      setError("Pick a player for every spot");
+      return;
+    }
+    if (new Set(allIds).size !== allIds.length) {
+      setError("The same player can't be picked twice");
       return;
     }
 
-    // Determine which ELO to use based on the match format
-    const key = format === "singles" ? "elo_s" : "elo_d";
+    // find the chosen players
+    const team1Players = ids1.map((id) => players.find((p) => p._id === id));
+    const team2Players = ids2.map((id) => players.find((p) => p._id === id));
+
+    // Team ELO
+    const average = (team: any[]) => team.reduce((sum, p) => sum + p[key], 0) / team.length;
+    const elo1 = average(team1Players);
+    const elo2 = average(team2Players);
 
     // A is higher ELO, B is lower ELO
-    const player1IsA = player1[key] >= player2[key];
-    const eloA = player1IsA ? player1[key] : player2[key];
-    const eloB = player1IsA ? player2[key] : player1[key];
-    const aWon = (winner === "team1") === player1IsA; // true if the higher ELO player won
+    const team1IsA = elo1 >= elo2;
+    const eloA = Math.max(elo1, elo2);
+    const eloB = Math.min(elo1, elo2);
+    const aWon = (winner === "team1") === team1IsA; // true if the higher ELO team won
 
     //Update Elo
     const expectedA = 1 / (1 + 10 ** ((eloB - eloA) / 400));
     const changeA = Math.round(32 * ((aWon ? 1 : 0) - expectedA));
     const newEloA = eloA + changeA;
     const newEloB = eloB - changeA;
+    // Elo Change
+    const change1 = team1IsA ? newEloA - eloA : newEloB - eloB;
+    const change2 = team1IsA ? newEloB - eloB : newEloA - eloA;
 
-    //Which Elo to update for each player
-    const newElo1 = player1IsA ? newEloA : newEloB;
-    const newElo2 = player1IsA ? newEloB : newEloA;
+    // Create a match object to send to the API
+    const member = (p: any, change: number) => ({
+      player: p._id,
+      eloBefore: p[key],
+      eloAfter: p[key] + change,
+      eloChange: change,
+    });
 
     //POST the match to the API
     const response = await fetch("/api/matches", {
@@ -71,8 +97,8 @@ export default function AddMatch() {
       },
       body: JSON.stringify({
         format,
-        team1: [{ player: player1._id, eloBefore: player1[key], eloAfter: newElo1, eloChange: newElo1 - player1[key] }],
-        team2: [{ player: player2._id, eloBefore: player2[key], eloAfter: newElo2, eloChange: newElo2 - player2[key] }],
+        team1: team1Players.map((p) => member(p, change1)),
+        team2: team2Players.map((p) => member(p, change2)),
         winner,
         status: "completed",
       }),
@@ -85,36 +111,41 @@ export default function AddMatch() {
       return;
     }
 
-    // PUT both players, stop if one fails
-    if (!(await updatePlayer(player1, key, newElo1, data._id))) return;
-    if (!(await updatePlayer(player2, key, newElo2, data._id))) return;
+    // PUT every player, stop if one fails
+    for (const p of team1Players) {
+      if (!(await updatePlayer(p, key, p[key] + change1, data._id))) return;
+    }
+    for (const p of team2Players) {
+      if (!(await updatePlayer(p, key, p[key] + change2, data._id))) return;
+    }
 
     setError("");
     alert("Match added successfully!");
     window.location.reload();
   }
 
+  // A dropdown listing all players
+  function playerSelect(value: string, setValue: (id: string) => void, label: string) {
+    return (
+      <select value={value} onChange={(e) => setValue(e.target.value)}>
+        <option value="">{label}</option>
+        {players.map((p) => (
+          <option key={p._id} value={p._id}>
+            {p.name}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
   // The form on the page
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold">Add Match</h2>
-      <select value={team1} onChange={(e) => setTeam1(e.target.value)}>
-        <option value="">Select Team 1 Player</option>
-        {players.map((player) => (
-          <option key={player._id} value={player._id}>
-            {player.name}
-          </option>
-        ))}
-      </select>
-
-      <select value={team2} onChange={(e) => setTeam2(e.target.value)}>
-        <option value="">Select Team 2 Player</option>
-        {players.map((player) => (
-          <option key={player._id} value={player._id}>
-            {player.name}
-          </option>
-        ))}
-      </select>
+      {playerSelect(team1, setTeam1, "Select Team 1 Player")}
+      {format === "doubles" && playerSelect(team1b, setTeam1b, "Select Team 1 Player 2")}
+      {playerSelect(team2, setTeam2, "Select Team 2 Player")}
+      {format === "doubles" && playerSelect(team2b, setTeam2b, "Select Team 2 Player 2")}
 
       <select value={format} onChange={(e) => setFormat(e.target.value)}>
         <option value="singles">Singles</option>
