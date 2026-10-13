@@ -23,6 +23,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid player name" }, { status: 400 });
     }
 
+    // Error if name already exists.
+    const existingPlayer = await Player.findOne({ name: trimmedName });
+    if (existingPlayer) {
+      return NextResponse.json({ error: "Player name already exists" }, { status: 400 });
+    }
+
     if (elo_s !== undefined && (!Number.isFinite(elo_s) || elo_s < 0 || elo_s > 1000)) {
       return NextResponse.json({ error: "Invalid elo_s value" }, { status: 400 });
     }

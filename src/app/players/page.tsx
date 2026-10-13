@@ -1,4 +1,5 @@
 import { playerInterface } from "@/database/schemas/playerSchema";
+import AddPlayer from "@/components/AddPlayer";
 import mongoose from "mongoose";
 import Players from "@/components/players";
 import FilterWrapper from "@/components/FilterWrapper";
@@ -32,6 +33,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ p
 
   return (
     <div>
+      <AddPlayer />
       <div className="h-15 w-full rounded-lg mb-6 flex items-center justify-center">
         <FilterWrapper />
       </div>

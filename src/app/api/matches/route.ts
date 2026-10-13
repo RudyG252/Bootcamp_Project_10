@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
     // body should contain data like the following:
     const body = await request.json();
-    const { format, team1, team2 } = body;
+    const { format, team1, team2, winner, status } = body;
     //TODO: Create a match using Match.create() with format, team1, team2 and queued as the status
 
     //TODO: return a NextResponse.json() with the match and a successful status code
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Elo must be a finite number between 0 and 1000" }, { status: 400 });
       }
     }
-    const create_match = await Match.create({ format, team1, team2 });
+    const create_match = await Match.create({ format, team1, team2, winner, status });
     return NextResponse.json(create_match, { status: 201 });
   } catch (error) {
     console.error(error);
