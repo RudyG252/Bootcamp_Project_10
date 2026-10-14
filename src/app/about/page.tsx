@@ -3,7 +3,7 @@ import LinkTree from "../../images/linktree.webp";
 import Facebook from "../../images/facebook.png";
 import Image from "next/image";
 import LeaderBoard from "@/components/Leaderboard";
-import { mockPlayers } from "../players/page";
+import { mockPlayers } from "@/data/mockPlayers";
 import Badminton1 from "../../images/Badminton/badminton1.jpg";
 import Badminton2 from "../../images/Badminton/badminton2.jpg";
 import Step1 from "../../images/aboutSteps/step1.jpg";

@@ -1,32 +1,25 @@
-# name of non-profit
+# Project Name
 
-{One sentence description of the project}
+Badminton Club Elo System
 
-## Table of Contents
+## Description
 
-- [Overview](#overview)
-  - [Purpose](#purpose)
-  - [Team](#team)
-- [Getting Started And Contributing](#getting-started-and-contributing)
+An elo ranking system for the Cal Poly badminton team that allows them to add players and log
+matches played against one anothers. Matches update all involved players elo when selected, and you
+have the option to view a leaderboard of players, a list of all matches, or search up a player's elo
+and matches.
 
-## Overview
+## Tech Stack
 
-### Purpose
+Next.js, React, TypeScript, MongoDB
 
-{Short paragraph description of the non-profit mission and the purpose of this project. Who will this project help, why is it necessary. Impact of the project.}
+## Setup
 
-### Team
+1. Clone the repo
+2. `npm install`
+3. Add `.env.local` with `MONGODB_URI`
+4. `npm run dev`
 
-The {non-profit name} team consists of {#} Cal Poly students. Over the course of about 9 months, we worked as a team to deploy this web application. The team members are listed below:
+## Live Demo
 
-- [First Last](https://www.linkedin.com/) - Project Manager
-- [First Last](https://www.linkedin.com/) - Designer
-- [First Last](https://www.linkedin.com/) - Tech Lead
-- [First Last](https://www.linkedin.com/) - Tech Lead
-- [First Last](https://www.linkedin.com/) - Software Developer
-
-## Getting Started And Contributing
-
-Visit [getting-started.md](docs/getting-started.md) on info for how to set up this repo.
-
-Visit [contributing.md](docs/contributing.md) on info for how to contribute to this repo.
+https://bootcamp-project-10-nzh5brejp-rudy-be70.vercel.app/

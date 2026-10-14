@@ -12,7 +12,7 @@ vi.mock("@/components/Leaderboard", () => ({
   ),
 }));
 
-vi.mock("../players/page", () => ({
+vi.mock("@/data/mockPlayers", () => ({
   mockPlayers: [],
 }));
 

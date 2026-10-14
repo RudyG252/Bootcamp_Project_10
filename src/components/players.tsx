@@ -1,6 +1,6 @@
 import MatchesTable from "@/components/matchesTable";
 import connectDB from "@/database/db";
-import Player from "@/database/schemas/playerSchema";
+import Player, { type playerInterface } from "@/database/schemas/playerSchema";
 import Match from "@/database/schemas/matchSchema";
 import FilterWrapper from "./FilterWrapper";
 
@@ -15,7 +15,9 @@ export default async function Players({ playerId }: PlayersProps) {
 
   // To test the filter, put { name: "" } in between .findOne() like this:
   // const playerData = await Player.findOne({ name: "Rudy" }).lean();
-  const playerData = playerId ? await Player.findById(playerId).lean() : await Player.findOne().lean();
+  const playerData = playerId
+    ? await Player.findById(playerId).lean<playerInterface | null>()
+    : await Player.findOne().lean<playerInterface | null>();
 
   if (!playerData) {
     return <p>No players found.</p>;
