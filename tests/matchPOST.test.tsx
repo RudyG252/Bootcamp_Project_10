@@ -169,4 +169,41 @@ describe("POST Unit Test", () => {
 
     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Failed to Create Match" }, { status: 500 });
   });
+  //Test Case 6: Invalid Elo Values
+  test("Returns 400 if eloBefore or eloAfter is not a finite number between 0 and 1000", async () => {
+    const invalidEloBody = {
+      format: "singles",
+      team1: [{ player: "65c2a1b3e4b0f2a1c3d4e5f6", eloBefore: -10, eloAfter: 1050 }],
+      team2: [{ player: "65c2a1b3e4b0f2a1c3d4e5f7", eloBefore: 500, eloAfter: 450 }],
+    };
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(isObjectIdOrHexString).mockReturnValue(true as any);
+    vi.mocked(Player.exists).mockResolvedValue(true as any);
+
+    const req = createMockRequest(invalidEloBody);
+    await POST(req);
+
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Elo must be a finite number between 0 and 1000" },
+      { status: 400 },
+    );
+    expect(Match.create).not.toHaveBeenCalled();
+  });
+
+  //Test Case 7: Invalid Player ID Format
+  test("Returns 400 if player ID is not a valid ObjectId or hex string", async () => {
+    const invalidPlayerIdBody = {
+      format: "singles",
+      team1: [{ player: "invalid-id-format" }],
+      team2: [{ player: "65c2a1b3e4b0f2a1c3d4e5f7", eloBefore: 500, eloAfter: 450 }],
+    };
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(isObjectIdOrHexString).mockReturnValue(false as any); // Invalid ID format
+
+    const req = createMockRequest(invalidPlayerIdBody);
+    await POST(req);
+
+    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Invalid or nonexistent player ID" }, { status: 400 });
+    expect(Match.create).not.toHaveBeenCalled();
+  });
 });
