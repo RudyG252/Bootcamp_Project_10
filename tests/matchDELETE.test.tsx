@@ -115,4 +115,21 @@ describe("DELETE Unit Test", () => {
 
     expect(NextResponse.json).toHaveBeenCalledWith(databaseError, { status: 500 });
   });
+
+  //Test Case 5: Server Runtime Catch
+  test("Returns status 500 if the database writing action crashes", async () => {
+    const validId = "6ab9b7dfa4775089d71b67bb";
+    const runtimeError = new Error("Unexpected Server Crash");
+
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(mongoose.isValidObjectId).mockReturnValue(true);
+    vi.mocked(Match.findByIdAndDelete).mockRejectedValue(runtimeError); // Force a runtime failure
+
+    const req = createMockRequest();
+    const ctx = createMockContext(validId);
+
+    await DELETE(req, ctx);
+
+    expect(NextResponse.json).toHaveBeenCalledWith(runtimeError, { status: 500 });
+  });
 });
