@@ -1,41 +1,44 @@
-import Player, { playerInterface } from "@/database/schemas/playerSchema";
-
-//  {
-//     _id: mongoose.Types.ObjectId;
-//     name: String;
-//     elo_s: Number;
-//     elo_d: Number;
-//     matches: Schema.Types.ObjectId[];
-//   }
+import { playerInterface } from "@/database/schemas/playerSchema";
 
 export default function LeaderBoard(playerList: playerInterface[], isSingles: boolean) {
+  const format = isSingles ? "Singles" : "Doubles";
+
   return (
-    <div className="bg-blue-200 align-middle items-center mt-12 max-w-250 mx-auto min-w-145">
-      <div className="items-center">
-        <h1 className="text-center text-4xl bg-blue-400 p-3 text-white font-bold">
-          {isSingles ? "Singles " : "Doubles "}Leaderboard
-        </h1>
+    <section className="min-w-0 w-full overflow-hidden rounded-xl bg-blue-200">
+      <h1 className="bg-blue-400 p-3 text-center text-2xl font-bold text-white sm:text-3xl">{format} Leaderboard</h1>
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={`${format} rankings, scroll to view more`}
+        className="max-h-[32rem] overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+      >
+        <table className="w-full min-w-[28rem] bg-blue-50 text-center">
+          <thead>
+            <tr>
+              <th scope="col" className="sticky top-0 z-10 border-b-2 border-blue-200 bg-blue-50 px-4 py-2">
+                Rank
+              </th>
+              <th scope="col" className="sticky top-0 z-10 border-b-2 border-blue-200 bg-blue-50 px-4 py-2">
+                Name
+              </th>
+              <th scope="col" className="sticky top-0 z-10 border-b-2 border-blue-200 bg-blue-50 px-4 py-2">
+                {isSingles ? "Elo S" : "Elo D"}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...playerList]
+              .sort((a, b) => (isSingles ? b.elo_s - a.elo_s : b.elo_d - a.elo_d))
+              .map((player, index) => (
+                <tr key={player._id.toString()} className="hover:bg-blue-100">
+                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="whitespace-nowrap px-4 py-2">{player.name}</td>
+                  <td className="px-4 py-2">{isSingles ? player.elo_s : player.elo_d}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </div>
-      <table className="bg-blue-50 w-full">
-        <thead>
-          <tr className="border-b-2 border-blue-200">
-            <th className="">Rank</th>
-            <th>Name</th>
-            {isSingles ? <th>Elo S</th> : <th>Elo D</th>}
-          </tr>
-        </thead>
-        <tbody className="align-middle items-center text-center">
-          {[...playerList]
-            .sort((a, b) => (isSingles ? b.elo_s - a.elo_s : b.elo_d - a.elo_d))
-            .map((player: playerInterface, index: number) => (
-              <tr key={player._id.toString()} className="hover:bg-blue-100">
-                <td>{index + 1}</td>
-                <td>{player.name}</td>
-                {isSingles ? <td>{player.elo_s}</td> : <td>{player.elo_d}</td>}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
+    </section>
   );
 }

@@ -6,25 +6,31 @@ import LeaderBoard from "@/components/Leaderboard";
 import { mockPlayers } from "../players/page";
 import Badminton1 from "../../images/Badminton/badminton1.jpg";
 import Badminton2 from "../../images/Badminton/badminton2.jpg";
+import Step1 from "../../images/aboutSteps/step1.jpg";
+import Step2 from "../../images/aboutSteps/step2.png";
+import Step3 from "../../images/aboutSteps/step3.png";
 
 const steps = [
   {
     step: 1,
     description: "You will be matched with players with similar elo rankings",
     alt: "image of players getting matched",
-    src: "",
+    src: Step1,
+    tailwind: "min-w-150 max-w-150 min-h-25",
   },
   {
     step: 2,
     description: "For every game you participate in, log your win/loss.",
     alt: "image of players logging win/loss",
-    src: "",
+    src: Step2,
+    tailwind: "py-20 bg-blue-300 px-5 min-w-150 max-w-150 min-h-25",
   },
   {
     step: 3,
     description: "Your elo will be updated automatically",
     alt: "image of elo updating",
-    src: "",
+    src: Step3,
+    tailwind: "min-h-25 bg-blue-200 px-20 py-7",
   },
 ];
 
@@ -60,7 +66,7 @@ export default function About() {
                 </div>
                 <div>
                   <a href="https://www.facebook.com/groups/calpolybadmintonteam/">
-                    <Image src={Facebook} alt="linktree" className="h-10 w-10 rounded-lg" />
+                    <Image src={Facebook} alt="facebook" className="h-10 w-10 rounded-lg" />
                   </a>
                 </div>
               </div>
@@ -79,11 +85,14 @@ export default function About() {
             <h3 className="text-2xl my-10">How it works</h3>
             <div className="flex space-y-10 flex-col min-w-full">
               {steps.map((stepObj, index) => (
-                <div className={`flex flex-col ${stepObj.step % 2 == 0 ? "ml-auto" : "justify-start"}`} key={index}>
+                <div
+                  className={`flex flex-col ${stepObj.step % 2 == 0 ? "ml-auto" : "justify-start"} object-cover`}
+                  key={index}
+                >
                   <Image
-                    src={""}
+                    src={stepObj.src}
                     alt={stepObj.alt}
-                    className="border-2 border-black min-w-150 max-w-150 min-h-50"
+                    className={`border-2 rounded-2xl object-cover ${stepObj.tailwind}`}
                   ></Image>
                   <div className="flex space-x-3 mt-5">
                     <p className="text-white font-bold bg-blue-400 min-w-10 text-center align-middle items-center min-h-full ">
