@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import PlayerSelect from "./PlayerSelect";
 
 //Form
 export default function AddMatch() {
@@ -11,13 +12,6 @@ export default function AddMatch() {
   const [format, setFormat] = useState("singles");
   const [winner, setWinner] = useState("team1");
   const [error, setError] = useState("");
-
-  // Fetch players from the API
-  useEffect(() => {
-    fetch("/api/players")
-      .then((response) => response.json())
-      .then(setPlayers);
-  }, []);
 
   // Update player ELO and matches
   async function updatePlayer(player: any, key: string, newElo: number, matchId: string) {
@@ -124,43 +118,88 @@ export default function AddMatch() {
     window.location.reload();
   }
 
-  // A dropdown listing all players
-  function playerSelect(value: string, setValue: (id: string) => void, label: string) {
+  // Search players and retain their full records for ELO updates.
+  function playerSelect(value: string, setValue: (id: string) => void, label: string, placeholder = "Select player") {
+    const player = players.find((p) => p._id === value);
     return (
-      <select value={value} onChange={(e) => setValue(e.target.value)}>
-        <option value="">{label}</option>
-        {players.map((p) => (
-          <option key={p._id} value={p._id}>
-            {p.name}
-          </option>
-        ))}
-      </select>
+      <PlayerSelect
+        ariaLabel={label}
+        placeholder={placeholder}
+        value={player ? { value, label: player.name } : null}
+        onChange={(option) => {
+          if (option?.player) {
+            const selectedPlayer = { ...option.player, _id: option.value };
+            setPlayers((current) => [...current.filter((p) => p._id !== option.value), selectedPlayer]);
+          }
+          setValue(option?.value || "");
+        }}
+      />
     );
   }
 
   // The form on the page
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold">Add Match</h2>
-      {playerSelect(team1, setTeam1, "Select Team 1 Player")}
-      {format === "doubles" && playerSelect(team1b, setTeam1b, "Select Team 1 Player 2")}
-      {playerSelect(team2, setTeam2, "Select Team 2 Player")}
-      {format === "doubles" && playerSelect(team2b, setTeam2b, "Select Team 2 Player 2")}
+    <div className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Add Match</h2>
+        <p className="mt-1 text-sm text-slate-500">Record a result and update the players ratings.</p>
+      </div>
 
-      <select value={format} onChange={(e) => setFormat(e.target.value)}>
-        <option value="singles">Singles</option>
-        <option value="doubles">Doubles</option>
-      </select>
+      <div className="mb-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        <label className="block text-sm font-medium text-slate-700">
+          Match format
+          <select
+            className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+          >
+            <option value="singles">Singles</option>
+            <option value="doubles">Doubles</option>
+          </select>
+        </label>
+        <label className="block text-sm font-medium text-slate-700">
+          Winning team
+          <select
+            className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            value={winner}
+            onChange={(e) => setWinner(e.target.value)}
+          >
+            <option value="team1">Team 1 Wins</option>
+            <option value="team2">Team 2 Wins</option>
+          </select>
+        </label>
+      </div>
 
-      <select value={winner} onChange={(e) => setWinner(e.target.value)}>
-        <option value="team1">Team 1 Wins</option>
-        <option value="team2">Team 2 Wins</option>
-      </select>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        <fieldset className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">Team 1</legend>
+          <div className="space-y-3">
+            {playerSelect(team1, setTeam1, "Select Team 1 Player")}
+            {format === "doubles" && playerSelect(team1b, setTeam1b, "Select Team 1 Player 2", "Select partner")}
+          </div>
+        </fieldset>
+        <fieldset className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">Team 2</legend>
+          <div className="space-y-3">
+            {playerSelect(team2, setTeam2, "Select Team 2 Player")}
+            {format === "doubles" && playerSelect(team2b, setTeam2b, "Select Team 2 Player 2", "Select partner")}
+          </div>
+        </fieldset>
+      </div>
 
-      <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={addMatch}>
-        Add Match
-      </button>
-      {error && <p className="text-red-600">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
+      <div className="mt-6 flex justify-end border-t border-slate-100 pt-5">
+        <button
+          className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:w-auto lg:w-full"
+          onClick={addMatch}
+        >
+          Add Match
+        </button>
+      </div>
     </div>
   );
 }

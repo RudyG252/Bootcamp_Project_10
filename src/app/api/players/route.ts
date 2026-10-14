@@ -23,8 +23,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid player name" }, { status: 400 });
     }
 
-    // Error if name already exists.
-    const existingPlayer = await Player.findOne({ name: trimmedName });
+    // Error if name already exists, regardless of capitalization.
+    const existingPlayer = await Player.findOne({ name: trimmedName }).collation({ locale: "en", strength: 2 });
     if (existingPlayer) {
       return NextResponse.json({ error: "Player name already exists" }, { status: 400 });
     }
