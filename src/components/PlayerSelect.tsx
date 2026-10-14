@@ -60,6 +60,7 @@ export default function PlayerSelect({
       onChange={onChange}
       value={value}
       isClearable
+      maxMenuHeight={240}
       placeholder={placeholder}
       aria-label={ariaLabel}
       instanceId={instanceId}
@@ -67,6 +68,7 @@ export default function PlayerSelect({
       styles={{
         control: (base) => ({ ...base, minHeight: 42, borderRadius: 8 }),
         menu: (base) => ({ ...base, zIndex: 20 }),
+        option: (base) => ({ ...base, whiteSpace: "normal", overflowWrap: "anywhere" }),
       }}
     />
   );

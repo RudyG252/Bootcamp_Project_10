@@ -42,7 +42,7 @@ export default async function Players({ playerId }: PlayersProps) {
   return (
     <div className="min-w-0">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold">{player.name}</h2>
+        <h2 className="overflow-x-auto whitespace-nowrap pb-1 text-2xl font-bold">{player.name}</h2>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="border rounded-lg p-4">
@@ -57,7 +57,7 @@ export default async function Players({ playerId }: PlayersProps) {
         </div>
       </div>
 
-      <div className="mt-6 overflow-x-auto">
+      <div className="mt-6 min-w-0">
         <MatchesTable matches={JSON.parse(JSON.stringify(playerMatches))} playerName={player.name} className="p-0" />
       </div>
     </div>

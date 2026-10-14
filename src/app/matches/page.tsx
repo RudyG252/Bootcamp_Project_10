@@ -42,7 +42,7 @@ export default async function Matches({ searchParams }: MatchesProps) {
           {matches.length === 0 ? (
             <p className="py-8 text-center text-sm text-slate-500">No matches found for this selection.</p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="min-w-0">
               <MatchesTable matches={matches} className="p-0" />
             </div>
           )}
