@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 export interface playerInterface {
   _id: mongoose.Types.ObjectId;
-  name: String;
+  name: string;
   elo_s: number;
   elo_d: number;
   matches: Schema.Types.ObjectId[];

@@ -5,7 +5,7 @@ import CPNow from "../../images/cpnow.png";
 import Image from "next/image";
 import GoogleCalendar from "../../images/googlecalendar.webp";
 import LeaderBoard from "@/components/Leaderboard";
-import { mockPlayers } from "../players/page";
+import { mockPlayers } from "@/data/mockPlayers";
 import Badminton1 from "../../images/Badminton/badminton1.jpg";
 import Badminton2 from "../../images/Badminton/badminton2.jpg";
 

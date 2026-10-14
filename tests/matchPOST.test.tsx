@@ -95,7 +95,70 @@ describe("POST Unit Test", () => {
     expect(Match.create).not.toHaveBeenCalled();
   });
 
-  //Test Case 5: Server Runtime Catch
+  //Test Case 4: Elo must be a number, not a numeric string
+  test("Returns 400 without creating a match when eloBefore is a numeric string", async () => {
+    const invalidBody = {
+      format: "singles",
+      team1: [{ player: "65c2a1b3e4b0f2a1c3d4e5f6", eloBefore: "500", eloAfter: 550 }],
+      team2: [{ player: "65c2a1b3e4b0f2a1c3d4e5f7", eloBefore: 500, eloAfter: 450 }],
+    };
+
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(isObjectIdOrHexString).mockReturnValue(true as any);
+    vi.mocked(Player.exists).mockResolvedValue({ _id: invalidBody.team1[0].player } as any);
+
+    await POST(createMockRequest(invalidBody));
+
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Elo must be a finite number between 0 and 1000" },
+      { status: 400 },
+    );
+    expect(Match.create).not.toHaveBeenCalled();
+  });
+
+  //Test Case 5: Elo validation must also check players on team2
+  test("Returns 400 without creating a match when team2 eloAfter exceeds 1000", async () => {
+    const invalidBody = {
+      format: "singles",
+      team1: [{ player: "65c2a1b3e4b0f2a1c3d4e5f6", eloBefore: 500, eloAfter: 450 }],
+      team2: [{ player: "65c2a1b3e4b0f2a1c3d4e5f7", eloBefore: 950, eloAfter: 1001 }],
+    };
+
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(isObjectIdOrHexString).mockReturnValue(true as any);
+    vi.mocked(Player.exists).mockResolvedValue({ _id: invalidBody.team2[0].player } as any);
+
+    await POST(createMockRequest(invalidBody));
+
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Elo must be a finite number between 0 and 1000" },
+      { status: 400 },
+    );
+    expect(Match.create).not.toHaveBeenCalled();
+  });
+
+  //Test Case 6: Both Elo limits are inclusive
+  test("Creates a match with status 201 when Elo values are exactly 0 and 1000", async () => {
+    const validBody = {
+      format: "singles",
+      team1: [{ player: "65c2a1b3e4b0f2a1c3d4e5f6", eloBefore: 0, eloAfter: 1000 }],
+      team2: [{ player: "65c2a1b3e4b0f2a1c3d4e5f7", eloBefore: 1000, eloAfter: 0 }],
+    };
+    const mockCreatedMatch = { _id: "match123", ...validBody, status: "queued" };
+
+    vi.mocked(connectDB).mockResolvedValue(undefined);
+    vi.mocked(isObjectIdOrHexString).mockReturnValue(true as any);
+    vi.mocked(Player.exists).mockResolvedValue({ _id: validBody.team1[0].player } as any);
+    vi.mocked(Match.create).mockResolvedValue(mockCreatedMatch as any);
+
+    await POST(createMockRequest(validBody));
+
+    expect(Match.create).toHaveBeenCalledTimes(1);
+    expect(Match.create).toHaveBeenCalledWith(validBody);
+    expect(NextResponse.json).toHaveBeenCalledWith(mockCreatedMatch, { status: 201 });
+  });
+
+  //Test Case 7: Server Runtime Catch
   test("Returns status 500 if the database writing action crashes", async () => {
     const validBody = { format: "1v1", team1: [], team2: [] };
     vi.mocked(connectDB).mockResolvedValue(undefined);
